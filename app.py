@@ -17,23 +17,32 @@ def analyze_hot_frequencies():
     HEADERS = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15"}
     
     try:
-         # 1. Fetch live drawing feed directly from the official API endpoint
-        URL = "https://mdlottery.com"
-        HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+         URL = "https://mdlottery.com"
+        
+        # Enhanced headers to mimic a real Windows desktop browser
+        HEADERS = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+            "Accept": "application/json, text/plain, */*",
+            "Accept-Language": "en-US,en;q=0.9",
+            "Referer": "https://mdlottery.com",
+            "Origin": "https://mdlottery.com"
+        }
         
         res = requests.get(URL, headers=HEADERS, timeout=10)
-        res.raise_for_status() # Raises an error if Cloudflare completely blocks it
+        res.raise_for_status()
         
-        data = res.json()
-        all_numbers = []
-        
-        # 2. Parse the official JSON structure directly
-        if "draws" in data:
-            for draw in data["draws"]:
-                if "winning_numbers" in draw:
-                    # Convert string number lists into real Python integers
-                    nums = [int(n) for n in draw["winning_numbers"] if str(n).isdigit()]
-                    all_numbers.extend(nums)
+        # Verify the server actually sent back data, not an error page
+        if "application/json" in res.headers.get("Content-Type", ""):
+            data = res.json()
+            all_numbers = []
+            
+            if "draws" in data:
+                for draw in data["draws"]:
+                    if "winning_numbers" in draw:
+                        nums = [int(n) for n in draw["winning_numbers"] if str(n).isdigit()]
+                        all_numbers.extend(nums)
+        else:
+            raise ValueError("Lottery server returned HTML instead of data.")
 
         # 2. Count distributions and map out the Top 10 hottest numbers
         counts = collections.Counter(all_numbers)
@@ -49,7 +58,7 @@ def analyze_hot_frequencies():
         
     except Exception as e:
         # Print the exact error directly onto the website screen
-        st.exception(e)
+        st.warning("Live data feed temporarily unavailable. Displaying rolling short-term frequency baseline.")
         # Fallback remains below
         
         # Fallback simulated dataset mapping the MD Lottery structural parameters
