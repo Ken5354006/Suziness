@@ -59,7 +59,7 @@ def analyze_hot_frequencies():
         
     except Exception as e:
         # Print the exact error directly onto the website screen
-        st.warning("Live data feed temporarily unavailable. Displaying rolling short-term frequency baseline.")
+        st.warning(f"Live data feed temporarily unavailable ({e}). Displaying rolling short-term frequency baseline.")
         # Fallback remains below
         
         # Fallback simulated dataset mapping the MD Lottery structural parameters
