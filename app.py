@@ -49,7 +49,7 @@ def analyze_hot_frequencies():
         # Print the exact error directly onto the website screen
         st.exception(e)
         # Fallback remains below
-        df = fetch_real_data()
+        
         # Fallback simulated dataset mapping the MD Lottery structural parameters
         # Emulates actual hot numbers paired with realistic short-term frequency hits
         mock_data = [
