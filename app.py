@@ -15,7 +15,7 @@ def analyze_hot_frequencies():
     # 1. Fetch live frontend drawing feed to extract exact distribution data
     URL = "https://www.mdlottery.com/games/keno/past-results/"
     HEADERS = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15"}
-        import urllib.robotparser
+    import urllib.robotparser
     import random
     import time
 
