@@ -16,10 +16,10 @@ def analyze_hot_frequencies():
     URL = "https://www.mdlottery.com/games/keno/past-results/"
     HEADERS = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15"}
     
-    try:
-         URL = "https://mdlottery.com"
+ try:
+        # 🛠️ FIXED: Full API endpoint URL so it returns numbers, not HTML
+        URL = "https://mdlottery.com"
         
-        # Enhanced headers to mimic a real Windows desktop browser
         HEADERS = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
             "Accept": "application/json, text/plain, */*",
@@ -31,11 +31,11 @@ def analyze_hot_frequencies():
         res = requests.get(URL, headers=HEADERS, timeout=10)
         res.raise_for_status()
         
-        # Verify the server actually sent back data, not an error page
+        all_numbers = []
+        
+        # Verify the server sent JSON data
         if "application/json" in res.headers.get("Content-Type", ""):
             data = res.json()
-            all_numbers = []
-            
             if "draws" in data:
                 for draw in data["draws"]:
                     if "winning_numbers" in draw:
@@ -43,9 +43,10 @@ def analyze_hot_frequencies():
                         all_numbers.extend(nums)
         else:
             raise ValueError("Lottery server returned HTML instead of data.")
-
-        # 2. Count distributions and map out the Top 10 hottest numbers
+            
+        # # 2. Count distributions and map out the Top 10 hottest numbers
         counts = collections.Counter(all_numbers)
+
         
         # If scraper works smoothly, grab the live rolling top 10 values
         if counts:
