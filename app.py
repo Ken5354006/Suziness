@@ -16,7 +16,7 @@ def analyze_hot_frequencies():
     URL = "https://www.mdlottery.com/games/keno/past-results/"
     HEADERS = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15"}
     
- try:
+    try:
         # 🛠️ FIXED: Full API endpoint URL so it returns numbers, not HTML
         URL = "https://mdlottery.com"
         
