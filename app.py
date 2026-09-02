@@ -17,21 +17,23 @@ def analyze_hot_frequencies():
     HEADERS = {"User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) AppleWebKit/605.1.15"}
     
     try:
-        res = requests.get(URL, headers=HEADERS, timeout=10)
-        soup = BeautifulSoup(res.text, "html.parser")
+         # 1. Fetch live drawing feed directly from the official API endpoint
+        URL = "https://mdlottery.com"
+        HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
         
-        # Parse all draw ball nodes from the results feed
-        draw_elements = soup.find_all("div", class_="keno-results-draw") or soup.find_all("ul", class_="winning-numbers")
+        res = requests.get(URL, headers=HEADERS, timeout=10)
+        res.raise_for_status() # Raises an error if Cloudflare completely blocks it
+        
+        data = res.json()
         all_numbers = []
         
-        for draw in draw_elements:
-            balls = draw.find_all("span", class_="keno-ball")
-            if balls:
-                all_numbers.extend([int(b.text.strip()) for b in balls if b.text.strip().isdigit()])
-                
-        if not all_numbers: # Backup parsing logic
-            balls = soup.find_all("span", class_="ball")
-            all_numbers = [int(b.text.strip()) for b in balls if b.text.strip().isdigit()]
+        # 2. Parse the official JSON structure directly
+        if "draws" in data:
+            for draw in data["draws"]:
+                if "winning_numbers" in draw:
+                    # Convert string number lists into real Python integers
+                    nums = [int(n) for n in draw["winning_numbers"] if str(n).isdigit()]
+                    all_numbers.extend(nums)
 
         # 2. Count distributions and map out the Top 10 hottest numbers
         counts = collections.Counter(all_numbers)
